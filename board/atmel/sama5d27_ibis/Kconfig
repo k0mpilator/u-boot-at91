@@ -1,7 +1,7 @@
 if TARGET_SAMA5D27_IBIS
 
 config SYS_BOARD
-	default "sama5d27_som1_ek"
+	default "sama5d27_ibis"
 
 config SYS_VENDOR
 	default "atmel"
