@@ -5,4 +5,4 @@
 # SPDX-License-Identifier:	GPL-2.0+
 #
 
-obj-y += sama5d27_som1_ek.o
+obj-y += sama5d27_ibis.o
