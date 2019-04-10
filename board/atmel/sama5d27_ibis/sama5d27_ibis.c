@@ -10,6 +10,8 @@
 #include <dm.h>
 #include <i2c.h>
 #include <asm/io.h>
+#include <nand.h>
+#include <version.h>
 #include <asm/arch/at91_common.h>
 #include <asm/arch/atmel_pio4.h>
 #include <asm/arch/atmel_mpddrc.h>
@@ -17,6 +19,7 @@
 #include <asm/arch/clk.h>
 #include <asm/arch/gpio.h>
 #include <asm/arch/sama5d2.h>
+#include <asm/arch/sama5d2_smc.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -24,6 +27,50 @@ static void board_usb_hw_init(void)
 {
 	atmel_pio4_set_pio_output(AT91_PIO_PORTA, 27, 1);
 }
+
+
+#ifdef CONFIG_NAND_ATMEL
+static void board_nand_hw_init(void)
+{
+	struct at91_smc *smc = (struct at91_smc *)ATMEL_BASE_SMC;
+
+	at91_periph_clk_enable(ATMEL_ID_HSMC);
+
+	/* Configure SMC CS3 for NAND */
+	writel(AT91_SMC_SETUP_NWE(1) | AT91_SMC_SETUP_NCS_WR(1) |
+	       AT91_SMC_SETUP_NRD(1) | AT91_SMC_SETUP_NCS_RD(1),
+	       &smc->cs[3].setup);
+	writel(AT91_SMC_PULSE_NWE(2) | AT91_SMC_PULSE_NCS_WR(4) |
+	       AT91_SMC_PULSE_NRD(2) | AT91_SMC_PULSE_NCS_RD(3),
+	       &smc->cs[3].pulse);
+	writel(AT91_SMC_CYCLE_NWE(6) | AT91_SMC_CYCLE_NRD(5),
+	       &smc->cs[3].cycle);
+	writel(AT91_SMC_TIMINGS_TCLR(2) | AT91_SMC_TIMINGS_TADL(7) |
+	       AT91_SMC_TIMINGS_TAR(2)  | AT91_SMC_TIMINGS_TRR(3)   |
+	       AT91_SMC_TIMINGS_TWB(7)  | AT91_SMC_TIMINGS_RBNSEL(3)|
+	       AT91_SMC_TIMINGS_NFSEL(1), &smc->cs[3].timings);
+	writel(AT91_SMC_MODE_RM_NRD | AT91_SMC_MODE_WM_NWE |
+	       AT91_SMC_MODE_EXNW_DISABLE |
+	       AT91_SMC_MODE_DBW_8 |
+	       AT91_SMC_MODE_TDF_CYCLE(3),
+	       &smc->cs[3].mode);
+
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 0, ATMEL_PIO_DRVSTR_ME);	/* D0 */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 1, ATMEL_PIO_DRVSTR_ME);	/* D1 */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 2, ATMEL_PIO_DRVSTR_ME);	/* D2 */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 3, ATMEL_PIO_DRVSTR_ME);	/* D3 */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 4, ATMEL_PIO_DRVSTR_ME);	/* D4 */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 5, ATMEL_PIO_DRVSTR_ME);	/* D5 */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 6, ATMEL_PIO_DRVSTR_ME);	/* D6 */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 7, ATMEL_PIO_DRVSTR_ME);	/* D7 */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 12, 0);	/* RE */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 8, 0);	/* WE */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 9, ATMEL_PIO_PUEN_MASK);	/* NCS */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 21, ATMEL_PIO_PUEN_MASK);	/* RDY */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 10, ATMEL_PIO_PUEN_MASK);	/* ALE */
+	atmel_pio4_set_f_periph(AT91_PIO_PORTA, 11, ATMEL_PIO_PUEN_MASK);	/* CLE */
+}
+#endif
 
 #ifdef CONFIG_DEBUG_UART_BOARD_INIT
 static void board_uart1_hw_init(void)
@@ -58,6 +105,10 @@ int board_init(void)
 
 #ifdef CONFIG_CMD_USB
 	board_usb_hw_init();
+#endif
+
+#ifdef CONFIG_NAND_ATMEL
+	board_nand_hw_init();
 #endif
 
 	return 0;
