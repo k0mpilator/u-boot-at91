@@ -81,7 +81,7 @@
 #define CONFIG_ENV_SECT_SIZE		0x10000
 #define CONFIG_BOOTCOMMAND		"sf probe 0; "				\
 					"sf read 0x21000000 0x140000 0x20000; "	\
-					"sf read 0x22000000 0x1e0000 0x400000; "\
+					"nand read 0x22000000 0x0 0xa00000; "   \
 					"bootz 0x22000000 - 0x21000000"
 #undef CONFIG_BOOTARGS
 #define CONFIG_BOOTARGS \
@@ -101,6 +101,17 @@
 /* PMECC & PMERRLOC */
 #define CONFIG_ATMEL_NAND_HWECC
 #define CONFIG_ATMEL_NAND_HW_PMECC
+
+#define CONFIG_PMECC_CAP		4
+#define CONFIG_PMECC_SECTOR_SIZE	512
+#define CONFIG_CMD_NAND_TRIMFFS
+#define CONFIG_CMD_MTDPARTS
+
+#define CONFIG_MTD_DEVICE
+#define CONFIG_MTD_PARTITIONS
+#define CONFIG_RBTREE
+#define CONFIG_LZO
+#define CONFIG_CMD_UBIFS
 
 #endif /* __CONFIG_H */
 
