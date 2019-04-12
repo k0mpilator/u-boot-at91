@@ -3,4 +3,4 @@
 # Copyright (C) 2017 Microchip Corporation
 #		     Wenyou Yang <wenyou.yang@microchip.com>
 
-obj-y += sama5d27_som1_ek.o
+obj-y += sama5d27_ibis.o
