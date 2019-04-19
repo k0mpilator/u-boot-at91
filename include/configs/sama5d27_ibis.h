@@ -31,7 +31,7 @@
 #define CONFIG_SYS_LOAD_ADDR		0x22000000 /* load address */
 
 /* NAND flash */
-#undef CONFIG_CMD_NAND
+/*#undef CONFIG_CMD_NAND*/
 #ifdef CONFIG_CMD_NAND
 
 #define CONFIG_NAND_ATMEL
