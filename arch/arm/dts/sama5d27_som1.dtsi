@@ -42,7 +42,6 @@
  *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  *     OTHER DEALINGS IN THE SOFTWARE.
  */
-
 #include "sama5d2.dtsi"
 #include "sama5d2-pinfunc.h"
 / {
@@ -58,6 +57,7 @@
 	};
 
 	ahb {
+
 		apb {
 			qspi1: spi@f0024000 {
 				pinctrl-names = "default";
@@ -83,6 +83,22 @@
 
 				ethernet-phy@1 {
 					reg = <0x1>;
+				};
+			};
+
+			hsmc: hsmc@f8014000 {
+				compatible = "atmel,sama5d2-smc", "syscon", "simple-mfd";
+				reg = <0xf8014000 0x1000>;
+				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 6>;
+				clocks = <&hsmc_clk>;
+				#address-cells = <1>;
+				#size-cells = <1>;
+				ranges;
+
+				pmecc: ecc-engine@f8014070 {
+					compatible = "atmel,sama5d2-pmecc";
+					reg = <0xf8014070 0x490>,
+					      <0xf8014500 0x100>;
 				};
 			};
 
