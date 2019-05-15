@@ -47,29 +47,17 @@
 /* PMECC & PMERRLOC */
 #define CONFIG_ATMEL_NAND_HWECC
 #define CONFIG_ATMEL_NAND_HW_PMECC
-/*#define CONFIG_PMECC_CAP		    8*/
-/*#define CONFIG_PMECC_SECTOR_SIZE	512*/
 /* !NAND flash */
 
 /* SPI flash */
 #define CONFIG_SF_DEFAULT_SPEED		66000000
 
-
 #undef CONFIG_BOOTCOMMAND
-/*#ifdef CONFIG_SD_BOOT*/
-/* u-boot env in sd/mmc card */
-/*#define CONFIG_ENV_SIZE		0x4000*/
-/* bootstrap + u-boot + env in sd card */
-/*#define CONFIG_BOOTCOMMAND	"fatload mmc " CONFIG_ENV_FAT_DEVICE_AND_PART " 0x21000000 at91-sama5d27_som1_ek.dtb; " \
-				"fatload mmc " CONFIG_ENV_FAT_DEVICE_AND_PART " 0x22000000 zImage; " \
-				"bootz 0x22000000 - 0x21000000"
-#endif*/
 
 #ifdef CONFIG_QSPI_BOOT
-#define CONFIG_BOOTCOMMAND \
-    "sf probe 0; sf read 0x21000000 0x180000 0x80000; sf read 0x22000000 0x200000 0x600000; bootz 0x22000000 - 0x21000000"
+#undef CONFIG_BOOTARGS
 #define CONFIG_BOOTARGS \
-	"console=ttyS0,115200 earlyprintk mtdparts=atmel_nand:-(rootfs) rootfstype=ubifs ubi.mtd=5 root=ubi0:rootfs"
+	"console=ttyS0,115200 earlyprintk rootfstype=ubifs ubi.mtd=5 root=ubi0:rootfs1 rw rootwait"
 #endif
 
 /* SPL */
@@ -82,11 +70,6 @@
 
 #define CONFIG_SYS_MONITOR_LEN		(512 << 10)
 
-/*#ifdef CONFIG_SD_BOOT
-#define CONFIG_SYS_MMCSD_FS_BOOT_PARTITION	1
-#define CONFIG_SPL_FS_LOAD_PAYLOAD_NAME		"u-boot.img"
-#endif*/
-
 #ifdef CONFIG_QSPI_BOOT
 #define CONFIG_SYS_SPI_U_BOOT_OFFS	0x10000
 
@@ -95,12 +78,5 @@
 /* !CONFIG_NAND */
 #define CONFIG_SPL_NAND_DRIVERS
 #define CONFIG_SPL_NAND_BASE
-/*#define CONFIG_SYS_NAND_5_ADDR_CYCLE
-#define CONFIG_SYS_NAND_PAGE_SIZE	           0x1000
-#define CONFIG_SYS_NAND_PAGE_COUNT	           64
-#define CONFIG_SYS_NAND_OOBSIZE		           224
-#define CONFIG_SYS_NAND_BLOCK_SIZE	           0x80000
-#define CONFIG_SYS_NAND_BAD_BLOCK_POS	       0x0
-#define CONFIG_SPL_GENERATE_ATMEL_PMECC_HEADER*/
 /* !CONFIG_NAND */
 #endif
