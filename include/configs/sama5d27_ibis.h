@@ -52,12 +52,16 @@
 /* SPI flash */
 #define CONFIG_SF_DEFAULT_SPEED		66000000
 
-#undef CONFIG_BOOTCOMMAND
-
 #ifdef CONFIG_QSPI_BOOT
-#undef CONFIG_BOOTARGS
-#define CONFIG_BOOTARGS \
-	"console=ttyS0,115200 earlyprintk rootfstype=ubifs ubi.mtd=5 root=ubi0:rootfs1 rw rootwait"
+#undef CONFIG_BOOTCOMMAND
+#define	CONFIG_EXTRA_ENV_SETTINGS \
+	  "mtdids=nand0=atmel_nand\0" \
+	  "mtdparts=mtdparts=atmel_nand:-(ubi)\0"
+	  
+#define CONFIG_BOOTCOMMAND		"sf probe 0; "					\
+					"sf read 0x21000000 0x180000 0x80000; "		\
+					"sf read 0x22000000 0x200000 0x600000; "	\
+					"bootz 0x22000000 - 0x21000000"
 #endif
 
 /* SPL */
